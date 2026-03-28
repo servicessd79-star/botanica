@@ -1,1 +1,260 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<title>Botanica — Huiles Naturelles</title>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,500;1,400&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet">
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+body{font-family:'DM Sans',sans-serif;background:#0D0A07;color:#F5EFE4;min-height:100vh;overflow-x:hidden;-webkit-tap-highlight-color:transparent}
+@keyframes fadeUp{from{opacity:0;transform:translateY(20px)}to{opacity:1;transform:translateY(0)}}
+@keyframes spin{to{transform:rotate(360deg)}}
+@keyframes pulse{0%,100%{opacity:.5}50%{opacity:1}}
+@keyframes float{0%,100%{transform:translateY(0)}50%{transform:translateY(-8px)}}
+.fu{animation:fadeUp .6s ease forwards}
+.fu1{animation:fadeUp .6s .1s ease forwards;opacity:0}
+header{padding:20px 22px;border-bottom:1px solid #2E2318;display:flex;align-items:center;justify-content:space-between;background:linear-gradient(180deg,#121008,#0D0A07);position:sticky;top:0;z-index:100}
+.logo-name{font-family:'Playfair Display',serif;font-size:1.6rem;font-weight:400;letter-spacing:.1em;color:#F5EFE4;line-height:1}
+.logo-tag{font-size:8px;letter-spacing:.28em;text-transform:uppercase;color:#7A6348;margin-top:3px}
+.hero{padding:36px 20px 26px;text-align:center;max-width:700px;margin:0 auto}
+.badge{font-size:8px;letter-spacing:.4em;text-transform:uppercase;color:#C9A84C;margin-bottom:10px}
+.hero h1{font-family:'Playfair Display',serif;font-size:clamp(1.6rem,6vw,2.8rem);font-weight:400;line-height:1.2;color:#F5EFE4;margin-bottom:12px}
+.hero h1 em{font-style:italic;color:#E8956A}
+.hero p{font-size:13px;color:#7A6348;line-height:1.8;max-width:400px;margin:0 auto 24px;font-weight:300}
+.modes{display:flex;gap:8px;justify-content:center;flex-wrap:wrap}
+.mbtn{padding:8px 20px;border:1px solid #2E2318;background:transparent;border-radius:60px;cursor:pointer;font-family:'DM Sans',sans-serif;font-size:11px;letter-spacing:.12em;text-transform:uppercase;color:#7A6348;transition:all .2s}
+.mbtn.active{background:#C9A84C;border-color:#C9A84C;color:#0D0A07;font-weight:500}
+.usec{max-width:700px;margin:0 auto;padding:0 16px 50px}
+.ucounter{font-size:12px;color:#7A6348;text-align:center;margin:18px 0 12px;letter-spacing:.07em}
+.ucounter b{font-family:'Playfair Display',serif;font-size:1.1rem;color:#C9A84C}
+.photo-list{display:flex;flex-direction:column;gap:12px;margin-bottom:20px}
+.photo-card{background:#1E1610;border:1.5px dashed #2E2318;border-radius:16px;overflow:hidden;position:relative}
+.photo-card.filled{border-style:solid;border-color:#C9A84C}
+.photo-preview{width:100%;height:200px;object-fit:cover;display:block}
+.photo-empty{height:80px;display:flex;align-items:center;justify-content:center;gap:12px;padding:0 20px}
+.photo-num{font-size:11px;letter-spacing:.2em;text-transform:uppercase;color:#7A6348;font-weight:300}
+.photo-actions{display:grid;grid-template-columns:1fr 1fr 1fr;border-top:1px solid #2E2318}
+.pa-btn{padding:14px 8px;background:transparent;border:none;cursor:pointer;font-family:'DM Sans',sans-serif;font-size:11px;color:#C4B49A;letter-spacing:.06em;text-transform:uppercase;display:flex;align-items:center;justify-content:center;gap:5px;border-right:1px solid #2E2318}
+.pa-btn:last-child{border-right:none}
+.pa-btn.cam{color:#C9A84C;font-weight:500}
+.pa-btn.gal{color:#A8C5A0}
+.pa-btn.del{color:#C47B52}
+.pa-btn:active{background:rgba(255,255,255,.05)}
+input[type=file]{position:absolute;width:0;height:0;opacity:0;pointer-events:none}
+.errmsg{background:rgba(196,123,82,.1);border:1px solid rgba(196,123,82,.3);border-radius:10px;padding:12px 16px;margin-bottom:16px;font-size:13px;color:#E8956A;text-align:center;display:none}
+.btn-go{width:100%;padding:16px;background:linear-gradient(135deg,#3D2B14,#2A1A08);color:#F5EFE4;border:1px solid #2E2318;border-radius:14px;cursor:pointer;font-family:'DM Sans',sans-serif;font-size:12px;letter-spacing:.25em;text-transform:uppercase;font-weight:400;position:relative;overflow:hidden;margin-bottom:6px}
+.btn-go::before{content:'';position:absolute;inset:0;background:linear-gradient(135deg,#C9A84C,#C47B52);opacity:0;transition:.3s}
+.btn-go:not(:disabled):active::before{opacity:1}
+.btn-go:disabled{opacity:.3;cursor:not-allowed}
+.btn-go span{position:relative;z-index:1}
+.tips{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-top:24px}
+.tip{background:#1E1610;border:1px solid #2E2318;border-radius:10px;padding:14px 10px;text-align:center}
+.tip-i{font-size:18px;margin-bottom:6px}
+.tip-t{font-size:10px;font-weight:500;color:#F5EFE4;margin-bottom:4px}
+.tip-d{font-size:9.5px;color:#7A6348;line-height:1.55}
+#loading{display:none;text-align:center;padding:70px 20px}
+.lrings{position:relative;width:90px;height:90px;margin:0 auto 26px}
+.r1{width:90px;height:90px;border-radius:50%;border:2px solid #2E2318;border-top-color:#C9A84C;animation:spin 1.2s linear infinite;position:absolute;inset:0}
+.r2{width:62px;height:62px;border-radius:50%;border:1px solid #2E2318;border-bottom-color:#C47B52;animation:spin 1.8s linear infinite reverse;position:absolute;top:14px;left:14px}
+.licon{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;font-size:20px;animation:float 3s ease-in-out infinite}
+.ltitle{font-family:'Playfair Display',serif;font-size:1.6rem;color:#F5EFE4;margin-bottom:10px}
+.lstep{font-size:11px;color:#7A6348;letter-spacing:.1em;animation:pulse 1.5s ease infinite}
+.ldots{display:flex;gap:8px;justify-content:center;margin-top:20px}
+.dot{width:6px;height:6px;border-radius:50%;background:#2E2318;transition:background .4s}
+.dot.on{background:#C9A84C}
+#results{display:none;max-width:700px;margin:0 auto;padding:0 16px 70px}
+.rhead{text-align:center;padding:36px 0 28px}
+.rbadge{font-size:8px;letter-spacing:.4em;text-transform:uppercase;color:#C9A84C;margin-bottom:10px}
+.rhead h2{font-family:'Playfair Display',serif;font-size:2rem;font-weight:400;color:#F5EFE4}
+.sumcard{background:linear-gradient(135deg,#1A1008,#0D0803);border:1px solid #2E2318;border-radius:16px;padding:24px 22px;margin-bottom:28px;position:relative;overflow:hidden}
+.sumcard::before{content:'✦';position:absolute;right:18px;top:50%;transform:translateY(-50%);font-size:5rem;opacity:.04;color:#C9A84C;pointer-events:none}
+.sbadge{font-size:8px;letter-spacing:.3em;text-transform:uppercase;color:#E8C97A;margin-bottom:7px;opacity:.8}
+.stype{font-family:'Playfair Display',serif;font-size:1.5rem;color:#F5EFE4;margin-bottom:9px}
+.sdesc{font-size:12px;color:#C4B49A;line-height:1.8;font-weight:300}
+.stags{display:flex;flex-wrap:wrap;gap:6px;margin-top:14px}
+.stag{padding:3px 10px;border:1px solid rgba(201,168,76,.3);border-radius:40px;font-size:8px;letter-spacing:.1em;text-transform:uppercase;color:#E8C97A}
+.sectit{display:flex;align-items:baseline;gap:10px;margin-bottom:4px}
+.sectit h3{font-family:'Playfair Display',serif;font-size:1.3rem;font-weight:400;color:#F5EFE4;white-space:nowrap}
+.secline{flex:1;height:1px;background:#2E2318}
+.secsub{font-size:11px;color:#7A6348;margin-bottom:16px}
+.ogrid{display:grid;grid-template-columns:repeat(auto-fill,minmax(160px,1fr));gap:10px;margin-bottom:36px}
+.ocard{background:#1E1610;border:1px solid #2E2318;border-radius:14px;padding:17px 15px;animation:fadeUp .5s ease forwards;opacity:0}
+.oicon{font-size:22px;margin-bottom:9px;display:block}
+.oname{font-family:'Playfair Display',serif;font-size:.95rem;color:#F5EFE4;margin-bottom:3px}
+.olatin{font-size:9.5px;font-style:italic;color:#7A6348;margin-bottom:9px}
+.odesc{font-size:11px;color:#C4B49A;line-height:1.7;font-weight:300;margin-bottom:10px}
+.oben{display:flex;flex-wrap:wrap;gap:4px;margin-bottom:9px}
+.ben{font-size:8px;padding:2px 8px;background:rgba(201,168,76,.08);border:1px solid #8B6D2A;border-radius:20px;color:#C9A84C}
+.stars{display:flex;gap:2px}
+.star{color:#C9A84C;font-size:10px}
+.star.e{opacity:.2}
+.divider{text-align:center;margin:28px 0;color:#8B6D2A;letter-spacing:.5em;font-size:10px;opacity:.6}
+.sgrid{display:grid;grid-template-columns:1fr;gap:12px;margin-bottom:36px}
+.scard{background:#1E1610;border:1px solid #2E2318;border-radius:14px;padding:20px 18px;animation:fadeUp .5s ease forwards;opacity:0}
+.sname{font-family:'Playfair Display',serif;font-size:1rem;color:#F5EFE4;margin-bottom:4px}
+.soils{font-size:9.5px;color:#C47B52;text-transform:uppercase;letter-spacing:.1em;margin-bottom:10px}
+.sdesc2{font-size:11px;color:#C4B49A;line-height:1.7;font-weight:300;margin-bottom:12px}
+.srecipe{background:rgba(201,168,76,.06);border:1px solid rgba(201,168,76,.14);border-radius:8px;padding:11px 13px}
+.srlabel{font-size:8px;letter-spacing:.25em;text-transform:uppercase;color:#C9A84C;margin-bottom:5px}
+.srtext{font-size:11px;color:#C4B49A;line-height:1.65}
+.rgrid{display:grid;grid-template-columns:repeat(2,1fr);gap:10px;margin-bottom:36px}
+.rcard{background:#1E1610;border:1px solid #2E2318;border-radius:12px;padding:16px 13px;text-align:center;animation:fadeUp .5s ease forwards;opacity:0}
+.rnum{font-family:'Playfair Display',serif;font-size:2.2rem;color:#C9A84C;opacity:.3;line-height:1;margin-bottom:5px}
+.rtitle{font-size:9.5px;font-weight:500;color:#F5EFE4;letter-spacing:.1em;text-transform:uppercase;margin-bottom:5px}
+.rdesc{font-size:10.5px;color:#7A6348;line-height:1.55}
+.precbox{background:rgba(196,123,82,.06);border:1px solid rgba(196,123,82,.2);border-left:3px solid #C47B52;border-radius:10px;padding:18px 20px;margin-bottom:36px}
+.ptitle{font-family:'Playfair Display',serif;color:#E8956A;font-size:.95rem;margin-bottom:10px}
+.pitem{font-size:11px;color:#C4B49A;line-height:1.6;padding-left:13px;position:relative;margin-bottom:6px}
+.pitem::before{content:'—';position:absolute;left:0;color:#C9A84C}
+.btn-reset{width:100%;padding:15px;background:linear-gradient(135deg,#3D2B14,#2A1A08);color:#F5EFE4;border:1px solid #2E2318;border-radius:12px;cursor:pointer;font-family:'DM Sans',sans-serif;font-size:11px;letter-spacing:.25em;text-transform:uppercase;font-weight:400}
+footer{border-top:1px solid #2E2318;padding:18px 20px;text-align:center;font-size:9.5px;color:#7A6348;letter-spacing:.06em}
+</style>
+</head>
+<body>
+<header>
+  <div><div class="logo-name">Botanica</div><div class="logo-tag">Intelligence des huiles naturelles</div></div>
+  <div style="font-size:14px;opacity:.4">🌿 🌸 ✦</div>
+</header>
+<div id="uploadPhase">
+  <div class="hero fu">
+    <div class="badge">✦ Analyse par intelligence artificielle ✦</div>
+    <h1>Les huiles parfaites<br>pour votre <em>peau & cheveux</em></h1>
+    <p>Prenez ou importez jusqu'à 5 photos. L'IA analyse et recommande les meilleures huiles naturelles.</p>
+    <div class="modes">
+      <button class="mbtn active" onclick="setMode('peau',this)">🌸 Peau</button>
+      <button class="mbtn" onclick="setMode('cheveux',this)">🌿 Cheveux</button>
+      <button class="mbtn" onclick="setMode('mixte',this)">✦ Les deux</button>
+    </div>
+  </div>
+  <div class="usec fu1">
+    <div class="ucounter"><b id="cnum">0</b> / 5 photos</div>
+    <div class="photo-list" id="photoList"></div>
+    <div class="errmsg" id="errmsg"></div>
+    <button class="btn-go" id="goBtn" onclick="startAnalysis()" disabled><span>✦ Analyser mes photos</span></button>
+    <div class="tips">
+      <div class="tip"><div class="tip-i">📷</div><div class="tip-t">Bonne lumière</div><div class="tip-d">Lumière naturelle pour une analyse précise</div></div>
+      <div class="tip"><div class="tip-i">🌿</div><div class="tip-t">100% naturel</div><div class="tip-d">Huiles végétales uniquement</div></div>
+      <div class="tip"><div class="tip-i">⚗</div><div class="tip-t">Synergies</div><div class="tip-d">Recettes et dosages personnalisés</div></div>
+    </div>
+  </div>
+</div>
+<div id="loading">
+  <div class="lrings"><div class="r1"></div><div class="r2"></div><div class="licon">🌿</div></div>
+  <div class="ltitle">Analyse en cours…</div>
+  <div class="lstep" id="lstep">Lecture des caractéristiques visuelles…</div>
+  <div class="ldots">
+    <div class="dot on" id="d0"></div><div class="dot" id="d1"></div>
+    <div class="dot" id="d2"></div><div class="dot" id="d3"></div><div class="dot" id="d4"></div>
+  </div>
+</div>
+<div id="results"></div>
+<footer>Botanica © 2025 — Recommandations à titre indicatif. Consultez un professionnel si nécessaire.</footer>
+<script>
+const photos=[null,null,null,null,null];
+let mode='peau',stepIdx=0,stepTimer=null;
+const STEPS=['Lecture des caractéristiques visuelles…','Identification du type de peau et cheveux…','Sélection des meilleures huiles naturelles…','Calcul des synergies bénéfiques…','Préparation de vos recommandations…'];
+
+function setMode(m,btn){mode=m;document.querySelectorAll('.mbtn').forEach(b=>b.classList.remove('active'));btn.classList.add('active');}
+
+function buildCards(){
+  const list=document.getElementById('photoList');
+  list.innerHTML='';
+  for(let i=0;i<5;i++){
+    const p=photos[i];
+    list.innerHTML+=`<div class="photo-card${p?' filled':''}" id="pc${i}">${p?`<img class="photo-preview" src="${p.src}">`:`<div class="photo-empty"><span style="font-size:22px;opacity:.3">📷</span><span class="photo-num">Photo ${i+1}</span></div>`}<div class="photo-actions"><button class="pa-btn cam" onclick="openCam(${i})">📷 Caméra</button><button class="pa-btn gal" onclick="openGal(${i})">🖼 Galerie</button>${p?`<button class="pa-btn del" onclick="delPhoto(${i})">✕ Retirer</button>`:`<button class="pa-btn" style="opacity:.2;cursor:default">✕</button>`}</div><input type="file" accept="image/*" capture="environment" id="cam${i}" onchange="gotFile(event,${i})"><input type="file" accept="image/*" id="gal${i}" onchange="gotFile(event,${i})"></div>`;
+  }
+}
+buildCards();
+
+function openCam(i){document.getElementById('cam'+i).click();}
+function openGal(i){document.getElementById('gal'+i).click();}
+function gotFile(e,i){
+  const file=e.target.files[0];if(!file)return;
+  const reader=new FileReader();
+  reader.onload=ev=>{photos[i]={b64:ev.target.result.split(',')[1],type:file.type,src:ev.target.result};buildCards();updateCount();};
+  reader.readAsDataURL(file);e.target.value='';
+}
+function delPhoto(i){photos[i]=null;buildCards();updateCount();}
+function updateCount(){const n=photos.filter(Boolean).length;document.getElementById('cnum').textContent=n;document.getElementById('goBtn').disabled=n===0;}
+function showStep(i){document.getElementById('lstep').textContent=STEPS[i%STEPS.length];for(let k=0;k<5;k++)document.getElementById('d'+k).classList.toggle('on',k<=i%5);}
+
+async function startAnalysis(){
+  const present=photos.filter(Boolean);if(!present.length)return;
+  document.getElementById('uploadPhase').style.display='none';
+  document.getElementById('results').style.display='none';
+  document.getElementById('loading').style.display='block';
+  document.getElementById('errmsg').style.display='none';
+  stepIdx=0;showStep(0);
+  stepTimer=setInterval(()=>{stepIdx++;showStep(stepIdx);},2000);
+  try{
+    const modeLabel=mode==='peau'?'la peau':mode==='cheveux'?'les cheveux':'la peau et les cheveux';
+    const content=[];
+    present.forEach(p=>content.push({type:'image',source:{type:'base64',media_type:p.type,data:p.b64}}));
+    content.push({type:'text',text:`Tu es un expert en cosmétique naturelle. Analyse ces ${present.length} photo(s) montrant ${modeLabel}. Réponds UNIQUEMENT en JSON valide sans texte avant ou après: {"analyse":{"type":"type","description":"2-3 phrases","caracteristiques":["c1","c2","c3","c4"]},"huiles":[{"nom":"Huile","nom_latin":"Latin","icone":"emoji","description":"2 phrases","bienfaits":["b1","b2","b3"],"note":5}],"synergies":[{"nom":"Nom","huiles_utilisees":"A+B","description":"effets","recette":"dosage"}],"routine":[{"titre":"Titre","description":"desc"}],"precautions":["p1","p2","p3"]}. 5-6 huiles, 3 synergies, 4 étapes.`});
+
+    const resp=await fetch('/analyze',{
+      method:'POST',
+      headers:{'Content-Type':'application/json'},
+      body:JSON.stringify({model:'claude-haiku-4-5-20251001',max_tokens:2000,messages:[{role:'user',content}]})
+    });
+    clearInterval(stepTimer);
+    if(!resp.ok)throw new Error('Erreur serveur '+resp.status);
+    const data=await resp.json();
+    const raw=(data.content||[]).map(b=>b.text||'').join('');
+    const parsed=JSON.parse(raw.replace(/```json|```/g,'').trim());
+    showResults(parsed);
+  }catch(err){
+    clearInterval(stepTimer);
+    document.getElementById('loading').style.display='none';
+    document.getElementById('uploadPhase').style.display='block';
+    const em=document.getElementById('errmsg');
+    em.textContent='Erreur: '+err.message;
+    em.style.display='block';
+  }
+}
+
+function starsH(n){return `<div class="stars">${Array.from({length:5},(_,i)=>`<span class="star${i<n?'':' e'}">★</span>`).join('')}</div>`;}
+
+function showResults(r){
+  document.getElementById('loading').style.display='none';
+  const em=mode==='cheveux'?'🌿':'🌸';
+  document.getElementById('results').innerHTML=`
+    <div class="rhead fu"><div class="rbadge">✦ Votre analyse personnalisée ✦</div><h2>Recommandations sur mesure</h2></div>
+    <div class="sumcard fu" style="animation-delay:.1s;opacity:0">
+      <div class="sbadge">${em} Profil détecté</div>
+      <div class="stype">${r.analyse?.type||''}</div>
+      <div class="sdesc">${r.analyse?.description||''}</div>
+      <div class="stags">${(r.analyse?.caracteristiques||[]).map(c=>`<span class="stag">${c}</span>`).join('')}</div>
+    </div>
+    <div class="sectit"><h3>Huiles recommandées</h3><div class="secline"></div></div>
+    <div class="secsub">Sélectionnées pour votre profil</div>
+    <div class="ogrid">${(r.huiles||[]).map((h,i)=>`<div class="ocard" style="animation-delay:${i*.07}s"><span class="oicon">${h.icone||'🫙'}</span><div class="oname">${h.nom}</div><div class="olatin">${h.nom_latin||''}</div><div class="odesc">${h.description}</div><div class="oben">${(h.bienfaits||[]).map(b=>`<span class="ben">${b}</span>`).join('')}</div>${starsH(h.note||5)}</div>`).join('')}</div>
+    <div class="divider">✦ ✦ ✦</div>
+    <div class="sectit"><h3>Synergies bénéfiques</h3><div class="secline"></div></div>
+    <div class="secsub">Associations pour effets décuplés</div>
+    <div class="sgrid">${(r.synergies||[]).map((s,i)=>`<div class="scard" style="animation-delay:${i*.1}s"><div class="sname">${s.nom}</div><div class="soils">${s.huiles_utilisees}</div><div class="sdesc2">${s.description}</div><div class="srecipe"><div class="srlabel">✦ Recette & Dosage</div><div class="srtext">${s.recette}</div></div></div>`).join('')}</div>
+    <div class="divider">✦ ✦ ✦</div>
+    <div class="sectit"><h3>Routine conseillée</h3><div class="secline"></div></div>
+    <div class="secsub">Intégrez ces huiles dans vos soins</div>
+    <div class="rgrid">${(r.routine||[]).map((s,i)=>`<div class="rcard" style="animation-delay:${i*.07}s"><div class="rnum">${String(i+1).padStart(2,'0')}</div><div class="rtitle">${s.titre}</div><div class="rdesc">${s.description}</div></div>`).join('')}</div>
+    <div class="precbox"><div class="ptitle">⚗ Précautions & conseils</div>${(r.precautions||[]).map(p=>`<div class="pitem">${p}</div>`).join('')}</div>
+    <button class="btn-reset" onclick="resetApp()">← Nouvelle analyse</button>
+  `;
+  document.getElementById('results').style.display='block';
+  window.scrollTo({top:0,behavior:'smooth'});
+}
+
+function resetApp(){
+  for(let i=0;i<5;i++)photos[i]=null;
+  buildCards();
+  document.getElementById('cnum').textContent='0';
+  document.getElementById('goBtn').disabled=true;
+  document.getElementById('results').style.display='none';
+  document.getElementById('uploadPhase').style.display='block';
+  window.scrollTo({top:0,behavior:'smooth'});
+}
+</script>
+</body>
+</html>
 
